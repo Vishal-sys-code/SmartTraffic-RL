@@ -1,0 +1,2 @@
+[gymnasium.envs]
+UrbanTraffic-v0 = smart_traffic_env.env:UrbanTrafficEnv
