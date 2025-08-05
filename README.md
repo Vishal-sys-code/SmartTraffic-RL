@@ -4,4 +4,4 @@ A Gym-style RL environment and benchmark for adaptive urban traffic signal contr
 ## Architecture Overview
 
 Below is the end-to-end structure of **SmartTraffic-RL**, showing how the components interact:
-![Architecture](architecture.png)
+![Architecture](docs/architecture.png)
