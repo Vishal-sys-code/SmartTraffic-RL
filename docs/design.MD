@@ -2,9 +2,9 @@
 
 This document outlines the Markov Decision Process (MDP) formalization of the Urban Traffic Signal Control environment.
 
-**Author**: *Vishal Pandey* and *Debasmita Biswas*
-**Date**: 2025-08-05  
-**Version**: 1.0  
+**Author**: *Vishal Pandey* and *Debasmita Biswas*\\
+**Date**: 2025-08-05  \\
+**Version**: 1.0  \\
 
 ---
 
