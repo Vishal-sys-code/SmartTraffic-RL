@@ -12,7 +12,7 @@ class DemandGenerator:
         num_steps: int,
         num_lanes: int,
         rng: np.random.RandomState,
-        base_demand: float = 100.0,
+        base_demand: float = 1000.0,
         period: int = 30,
         amplitude: float = 40.0,
         noise_std: float = 10.0,
@@ -51,8 +51,7 @@ class DemandGenerator:
             # Combine and ensure non-negative demand
             lane_demand = np.maximum(0, sinusoid + noise)
 
-            # Convert from vehicles per hour to vehicles per second (assuming control interval is 1 hr for this)
-            # The env will multiply by control_interval later.
-            demand[:, lane] = lane_demand / 3600.0
+            # The demand is in vehicles per hour. The environment will scale it by the control interval.
+            demand[:, lane] = lane_demand
 
         return demand.astype(np.float32)
