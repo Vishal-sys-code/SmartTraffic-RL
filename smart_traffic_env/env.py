@@ -1,10 +1,10 @@
 import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Optional
 
 from .demand import DemandGenerator
-from .utils import (
+from .flow_model import (
     compute_reward,
     compute_service_rate,
     G_MAX,
@@ -105,7 +105,7 @@ class UrbanTrafficEnv(gym.Env):
         # 7. Increment step count and check for termination
         self.step_count += 1
         done = self.step_count >= self.episode_length
-        
+
         # 8. Assemble next observation and info
         obs = self._get_obs()
         info = self._get_info()
