@@ -1,7 +1,7 @@
 from gymnasium.envs.registration import register
 
 # Expose the environment class
-from .env import UrbanTrafficEnv
+from .env import UrbanTrafficEnv  # noqa: F401
 
 # Register the environment
 register(
