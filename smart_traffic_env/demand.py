@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Optional
 
 
 class DemandGenerator:
@@ -40,18 +39,18 @@ class DemandGenerator:
         for lane in range(self.num_lanes):
             # Introduce some phase shift for each lane for variety
             phase_shift = self.rng.uniform(0, self.period)
-            
+
             # Sinusoidal pattern
             sinusoid = self.base_demand + self.amplitude * np.sin(
                 2 * np.pi * (time - phase_shift) / self.period
             )
-            
+
             # Add random noise
             noise = self.rng.normal(0, self.noise_std, self.num_steps)
-            
+
             # Combine and ensure non-negative demand
             lane_demand = np.maximum(0, sinusoid + noise)
-            
+
             # Convert from vehicles per hour to vehicles per second (assuming control interval is 1 hr for this)
             # The env will multiply by control_interval later.
             demand[:, lane] = lane_demand / 3600.0
