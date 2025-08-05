@@ -10,16 +10,44 @@ from .demand import DemandGenerator
 class UrbanTrafficEnv(gym.Env):
     """Gym-style env for urban traffic signal control."""
 
-    def __init__(self):
+    def __init__(
+        self,
+        num_intersections: int = 4,
+        lanes_per_intersection: int = 2,
+        base_green: float = 30.0,
+        delta_max: float = 5.0,
+        control_interval: float = 60.0,
+        episode_length: int = 60,
+        demand_profile: np.ndarray = None,
+        seed: int = None,
+    ) -> None:
         super(UrbanTrafficEnv, self).__init__()
+        self.num_intersections = num_intersections
+        self.lanes_per_intersection = lanes_per_intersection
+        self.base_green = base_green
+        self.delta_max = delta_max
+        self.control_interval = control_interval
+        self.episode_length = episode_length
+        self.demand_profile = demand_profile
+        self.seed = seed
 
-        # Define action and observation spaces
-        # They must be gym.spaces objects
-        # Example when dealing with discrete actions:
-        self.action_space = spaces.Discrete(2)
-        # Example for using image as input:
-        self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(1, 1, 3), dtype=np.uint8)
+        self.rng = np.random.RandomState(seed)
+
+        self.demand_gen = DemandGenerator(
+            num_steps=episode_length,
+            num_lanes=num_intersections * lanes_per_intersection,
+            rng=self.rng
+        )
+
+        N = self.num_intersections
+        M = self.num_intersections * self.lanes_per_intersection
+
+        self.observation_space = spaces.Box(
+            low=0, high=np.inf, shape=(2 * M + N,), dtype=np.float32
+        )
+        self.action_space = spaces.Box(
+            low=-self.delta_max, high=self.delta_max, shape=(N,), dtype=np.float32
+        )
 
     def step(self, action):
         # Execute one time step within the environment
