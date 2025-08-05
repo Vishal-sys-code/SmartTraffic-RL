@@ -1,4 +1,4 @@
-import smart_traffic_env 
+import smart_traffic_env  # noqa: F401
 import gymnasium as gym
 from gymnasium.envs.registration import registry
 
