@@ -91,10 +91,11 @@ class UrbanTrafficEnv(gym.Env):
         )
 
         # 5. Update queues
+        arrival_rate_per_sec = arrival / 3600.0
         self.queues = np.maximum(
             0,
             self.queues
-            + (arrival * self.control_interval)
+            + (arrival_rate_per_sec * self.control_interval)
             - (service * self.control_interval),
         ).astype(np.float32)
 
