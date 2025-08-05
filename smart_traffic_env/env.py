@@ -52,8 +52,23 @@ class UrbanTrafficEnv(gym.Env):
         N = self.num_intersections
         M = self.num_lanes
 
+        # Define constants for observation space bounds
+        MAX_QUEUE_VEHICLES = 5000.0
+        MAX_DEMAND_VEHICLES_PER_HOUR = 500.0
+
+        obs_low = np.concatenate([
+            np.zeros(M, dtype=np.float32),  # Queues
+            np.zeros(M, dtype=np.float32),  # Demand
+            np.full(N, G_MIN, dtype=np.float32)   # Greens
+        ])
+        obs_high = np.concatenate([
+            np.full(M, MAX_QUEUE_VEHICLES, dtype=np.float32),
+            np.full(M, MAX_DEMAND_VEHICLES_PER_HOUR, dtype=np.float32),
+            np.full(N, G_MAX, dtype=np.float32)
+        ])
+
         self.observation_space = spaces.Box(
-            low=0, high=np.inf, shape=(2 * M + N,), dtype=np.float32
+            low=obs_low, high=obs_high, dtype=np.float32
         )
         self.action_space = spaces.Box(
             low=-self.delta_max, high=self.delta_max, shape=(N,), dtype=np.float32
