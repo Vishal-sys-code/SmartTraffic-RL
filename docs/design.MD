@@ -13,21 +13,27 @@ This document outlines the Markov Decision Process (MDP) formalization of the Ur
 Let there be $N$ intersections and $L$ lanes per intersection (total $M = N \times L$ lanes). At each control step $t$, the state vector $s_t \in \mathbb{R}^{d}$ is defined as:
 
 - **Queue lengths**:  
+
   $$
   q_t = [q^1_t, q^2_t, \dots, q^M_t]
   $$
+
   where $q^i_t$ is the number of vehicles waiting in lane $i$ at time $t$.
 
 - **Arrival rates**:  
+  
   $$
   \lambda_t = [\lambda^1_t, \lambda^2_t, \dots, \lambda^M_t]
   $$
+  
   where $\lambda^i_t$ is the estimated arrival rate (vehicles per second) to lane $i$ at time $t$.
 
 - **Current green durations**:  
+
   $$
   g_t = [g^1_t, g^2_t, \dots, g^N_t]
   $$
+
   where $g^j_t$ is the current green-time allocation (in seconds) for intersection $j$ during this control interval.
 
 Thus, the full state vector is:
@@ -81,6 +87,7 @@ The dynamics evolve over a fixed control interval $\Delta t$ (e.g., 60 s). For e
    - $s_{\mathrm{sat}}$ is the saturation flow rate (vehicles per second of green).
 
 3. **Queue update**  
+
    $$
    q^i_{t+1} = \max\left\{0,\;q^i_t + \lambda^i_t \Delta t - \mu^i_t \Delta t\right\}
    $$
@@ -94,16 +101,20 @@ This deterministic update is supplemented by stochastic arrivals from step 1.
 We design the reward to capture network performance, balancing delay minimization and fairness:
 
 - **Total waiting time penalty**:  
+
   $$
   r^{(1)}_t = -\sum_{i=1}^{M} q^i_{t+1}
   $$
 
+
 - **Queue imbalance penalty**:  
+
   $$
   r^{(2)}_t = -\kappa \sum_{i=1}^{M} \left|q^i_{t+1} - \bar{q}_{t+1}\right|, \quad \bar{q}_{t+1} = \frac{1}{M} \sum_{i} q^i_{t+1}
   $$
 
 - **Throughput bonus (optional)**:  
+
   $$
   r^{(3)}_t = +\alpha \sum_{i=1}^{M} \min\left(q^i_t, \mu^i_t \Delta t\right)
   $$
