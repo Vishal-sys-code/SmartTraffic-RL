@@ -1,0 +1,29 @@
+Metadata-Version: 2.4
+Name: SmartTraffic-RL
+Version: 0.1.0
+Summary: A Gym-style RL environment for adaptive urban traffic signal control.
+Home-page: https://github.com/openai/smart-traffic-rl
+Author: Vishal Pandey
+Author-email: pandeyvishal.mlprof@gmail.com
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: gymnasium>=0.26.0
+Requires-Dist: numpy>=1.19.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# SmartTraffic-RL
+A Gym-style RL environment and benchmark for adaptive urban traffic signal control using macroscopic flow models (with optional SUMO integration).
+
+## Architecture Overview
+
+Below is the end-to-end structure of **SmartTraffic-RL**, showing how the components interact:
+![Architecture](docs/architecture.png)
