@@ -181,3 +181,79 @@ class UrbanTrafficEnv(gym.Env):
     def _get_info(self) -> dict:
         """Constructs the info dictionary."""
         return {"queues": self.queues, "greens": self.greens}
+
+
+class FixedTimeController:
+    """
+    A simple controller that uses a fixed green time for all intersections.
+    """
+
+    def __init__(self, env: UrbanTrafficEnv):
+        self.env = env
+        self.num_intersections = env.num_intersections
+
+    def run_episode(self) -> float:
+        """
+        Runs a single episode with a fixed-time policy.
+
+        Returns:
+            float: The average queue length over the episode.
+        """
+        obs, info = self.env.reset()
+        total_queue = 0
+        done = False
+        while not done:
+            action = np.zeros(self.num_intersections)  # delta = 0
+            obs, reward, done, truncated, info = self.env.step(action)
+            total_queue += np.mean(self.env.queues)
+            if truncated:
+                break
+        return total_queue / self.env.step_count
+
+
+class ActuatedController:
+    """
+    A simple actuated controller that adjusts green times based on queue lengths.
+    """
+
+    def __init__(self, env: UrbanTrafficEnv, gain: float = 0.5):
+        self.env = env
+        self.num_intersections = env.num_intersections
+        self.lanes_per_intersection = env.lanes_per_intersection
+        self.gain = gain
+
+    def _compute_action(self, obs: np.ndarray) -> np.ndarray:
+        """
+        Computes the action based on the current observation (queues).
+        """
+        queues = obs[:self.env.num_lanes]
+        action = np.zeros(self.num_intersections)
+
+        for i in range(self.num_intersections):
+            # Assumes a simple 2-lane per intersection setup
+            # Lane 2*i vs Lane 2*i+1
+            q1 = queues[2 * i]
+            q2 = queues[2 * i + 1]
+            
+            # Action is proportional to the difference in queue lengths
+            action[i] = self.gain * (q1 - q2)
+
+        return action
+
+    def run_episode(self) -> float:
+        """
+        Runs a single episode with the actuated policy.
+
+        Returns:
+            float: The average queue length over the episode.
+        """
+        obs, info = self.env.reset()
+        total_queue = 0
+        done = False
+        while not done:
+            action = self._compute_action(obs)
+            obs, reward, done, truncated, info = self.env.step(action)
+            total_queue += np.mean(self.env.queues)
+            if truncated:
+                break
+        return total_queue / self.env.step_count
