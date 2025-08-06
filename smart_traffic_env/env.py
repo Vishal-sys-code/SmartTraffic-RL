@@ -11,7 +11,6 @@ from .flow_model import (
     G_MIN,
     DEFAULT_ALL_RED,
     DEFAULT_SAT_FLOW,
-    IMBALANCE_KAPPA,
 )
 
 
@@ -115,7 +114,7 @@ class UrbanTrafficEnv(gym.Env):
         ).astype(np.float32)
 
         # 6. Compute reward
-        reward = compute_reward(self.queues, IMBALANCE_KAPPA)
+        reward = compute_reward(self.queues)
         self.current_reward = reward
 
         # 7. Increment step count and check for termination
