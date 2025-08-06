@@ -7,8 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'SmartTraffic-RL'
-copyright = '2025, OpenAI'
-author = 'OpenAI'
+copyright = '2025, NeurxAI-Labs'
+author = 'Vishal Pandey'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
