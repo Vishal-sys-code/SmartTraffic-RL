@@ -1,16 +1,12 @@
-import numpy as np
-from smart_traffic_env.env import UrbanTrafficEnv
+from smart_traffic_env.env import UrbanTrafficEnv, FixedTimeController
 
-def fixed_time_controller(env, green_time):
-    obs, info = env.reset()
-    total_queue = 0
-    for _ in range(env.episode_length):
-        action = np.zeros(env.num_intersections)  # delta = 0 → keeps base_green
-        obs, reward, done, truncated, info = env.step(action)
-        total_queue += np.mean(env.queues)
-        if done or truncated:
-            break
-    return total_queue / env.episode_length
-
+# Instantiate the environment
 env = UrbanTrafficEnv()
-print("Fixed-time avg queue:", fixed_time_controller(env, env.base_green))
+
+# Instantiate the controller
+fixed_time_controller = FixedTimeController(env)
+
+# Run a single episode
+avg_queue = fixed_time_controller.run_episode()
+
+print(f"Fixed-time avg queue for one episode: {avg_queue:.2f}")
