@@ -41,26 +41,20 @@ def compute_service_rate(
     return service_rate_per_lane
 
 
-def compute_reward(queues: np.ndarray, imbalance_kappa: float) -> float:
+def compute_reward(queues: np.ndarray) -> float:
     """
-    Computes the reward for the current state.
+    Computes the reward for the current state. The reward is the negative
+    average queue length, which is a common metric in traffic signal control.
 
     Args:
         queues: Current queue lengths for each lane [M,].
-        imbalance_kappa: Weight for the queue imbalance penalty.
 
     Returns:
         Scalar reward value.
     """
-    # 1. Total wait penalty (sum of all queues)
-    wait_penalty = -np.sum(queues)
-
-    # 2. Imbalance penalty
-    if len(queues) > 0:
-        mean_queue = np.mean(queues)
-        imbalance_penalty = -imbalance_kappa * np.sum(np.abs(queues - mean_queue))
-    else:
-        imbalance_penalty = 0
-
-    reward = wait_penalty + imbalance_penalty
+    # Simplified reward: negative mean of queue lengths.
+    # This makes the reward signal more stable and O(1).
+    if queues.size == 0:
+        return 0.0
+    reward = -np.mean(queues)
     return float(reward)
