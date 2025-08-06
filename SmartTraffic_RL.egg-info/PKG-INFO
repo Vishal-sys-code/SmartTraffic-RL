@@ -84,3 +84,13 @@ The following results were obtained after training for 200,000 timesteps with a 
 | Fixed-Time | 246.95               |
 
 The training metrics showed a healthy learning process, with `approx_kl` around `0.01` and `explained_variance` consistently above 0, indicating that the value function was learning effectively. This confirms that the PPO pipeline is working as expected.
+
+## Visualization
+
+The repository includes tools to log and visualize simulation metrics. The `examples/evaluate.py` script, when run, will produce JSON log files for both the PPO and fixed-time agents. These logs can be used to generate plots comparing their performance.
+
+For example, the following plot shows the average vehicle delay per episode for a trained PPO agent versus a fixed-time agent:
+
+![Average Delay Plot](docs/average_delay.png)
+
+For more details on logging and visualization, see the [API documentation](docs/api.md).
