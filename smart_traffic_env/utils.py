@@ -1,66 +1,54 @@
-# import numpy as np
+import json
+import numpy as np
 
-# # Default physical parameters
-# DEFAULT_ALL_RED = 5.0  # seconds
-# DEFAULT_SAT_FLOW = 2400.0 / 3600.0  # veh/s
-# G_MIN = 10.0  # seconds
-# G_MAX = 60.0  # seconds
-# IMBALANCE_KAPPA = 0.1  # Coefficient for queue imbalance penalty
+class MetricsLogger:
+    """
+    Logs time-series data for an episode, including queues, actions, and rewards.
+    """
+    def __init__(self):
+        self.episode_logs = []
+        self._current_episode_queues = []
+        self._current_episode_actions = []
+        self._current_episode_rewards = []
 
+    def log_step(self, queues, action, reward):
+        """
+        Records the metrics for a single simulation step.
 
-# def compute_service_rate(
-#     greens: np.ndarray,
-#     num_lanes: int,
-#     all_red_time: float,
-#     saturation_flow: float,
-# ) -> np.ndarray:
-#     """
-#     Computes the service rate for each lane based on green times.
+        Args:
+            queues (np.ndarray): The current queue lengths.
+            action (np.ndarray): The action taken by the agent.
+            reward (float): The reward received.
+        """
+        self._current_episode_queues.append(queues.tolist())
+        self._current_episode_actions.append(action.tolist())
+        self._current_episode_rewards.append(reward)
 
-#     Args:
-#         greens: Current green times for each intersection [N,].
-#         num_lanes: Number of lanes per intersection.
-#         all_red_time: All-red time in seconds.
-#         saturation_flow: Saturation flow rate in veh/s.
+    def end_episode(self):
+        """
+        Aggregates and stores the logs for the completed episode.
+        """
+        if not self._current_episode_queues:
+            return  # Avoid saving empty episodes
 
-#     Returns:
-#         Service rate for each lane [M,].
-#     """
-#     num_intersections = len(greens)
-#     cycle_length = np.sum(greens) + num_intersections * all_red_time
+        log_entry = {
+            "queues": self._current_episode_queues,
+            "actions": self._current_episode_actions,
+            "rewards": self._current_episode_rewards,
+        }
+        self.episode_logs.append(log_entry)
 
-#     if cycle_length <= 0:
-#         return np.zeros(num_intersections * num_lanes)
+        # Reset for the next episode
+        self._current_episode_queues = []
+        self._current_episode_actions = []
+        self._current_episode_rewards = []
 
-#     # Service rate for each *intersection*
-#     intersection_service_rate = (greens / cycle_length) * saturation_flow
+    def save(self, filepath: str):
+        """
+        Saves the logged data to a JSON file.
 
-#     # Expand to all lanes
-#     service_rate_per_lane = np.repeat(intersection_service_rate, num_lanes)
-
-#     return service_rate_per_lane
-
-
-# def compute_reward(queues: np.ndarray, imbalance_kappa: float) -> float:
-#     """
-#     Computes the reward for the current state.
-
-#     Args:
-#         queues: Current queue lengths for each lane [M,].
-#         imbalance_kappa: Weight for the queue imbalance penalty.
-
-#     Returns:
-#         Scalar reward value.
-#     """
-#     # 1. Total wait penalty (sum of all queues)
-#     wait_penalty = -np.sum(queues)
-
-#     # 2. Imbalance penalty
-#     if len(queues) > 0:
-#         mean_queue = np.mean(queues)
-#         imbalance_penalty = -imbalance_kappa * np.sum(np.abs(queues - mean_queue))
-#     else:
-#         imbalance_penalty = 0
-
-#     reward = wait_penalty + imbalance_penalty
-#     return float(reward)
+        Args:
+            filepath: The path to the output file.
+        """
+        with open(filepath, 'w') as f:
+            json.dump(self.episode_logs, f, indent=4)
